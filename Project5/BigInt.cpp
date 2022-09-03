@@ -71,31 +71,23 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 	}
 
 	bool zero_remove_flag = true;
+	int front_i = 0;
 	int result_back_end = 0;
-	for (int back_i = result.length() - 1; back_i >= result_back_end; back_i--) {
-
-	}
-
-	/*bool zero_remove_flag = 1;
-	std::string::iterator front_i = result.begin();
-	std::string::reverse_iterator result_back_end = result.rend();
-	size_t zero_counter = 0;
-	for (std::string::reverse_iterator back_i = result.rbegin(); back_i + 1 != result_back_end; back_i++) {
-		if (zero_remove_flag && *back_i != 0) {
+	for (int back_i = result.length() - 1; back_i >= result_back_end; back_i--) { //TODO: REWORK ZERO POP (ONLY ONE ZERO CAN APPEAR)
+		if (zero_remove_flag && result[back_i] != 0) {
 			zero_remove_flag = false;
-			result_back_end -= zero_counter;
+			result_back_end = (back_i/2 + (back_i%2));
 		}
 		if (zero_remove_flag) {
 			result.pop_back();
-			zero_counter++;
 		}
 		else {
-			char cache = *back_i + '0';
-			*back_i = *front_i + '0';
-			*front_i = cache;
+			char cache = result[back_i] + '0';
+			result[back_i] = result[front_i] + '0';
+			result[front_i] = cache;
 			front_i++;
 		}
-	}*/
+	}
 
 	return BigInt(result);
 }

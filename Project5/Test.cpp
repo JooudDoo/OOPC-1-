@@ -10,5 +10,10 @@ int main() {
 
 	value = value + value2;
 
+	value = 1;
+	value2 = 0;
+
+	value = value + value2;
+
 	return 0;
 }
