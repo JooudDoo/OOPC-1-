@@ -18,9 +18,9 @@ BigInt::BigInt(int num) {
 
 BigInt::BigInt(std::string num) {
 	for (auto elem : num) {
-		if (elem < '0' || elem > '9') {
+		if ((elem < '0' || elem > '9') && elem != '-') {
 			throw std::invalid_argument("NAN: " + elem);
-		}	
+		}
 	}
 	BigInt::value = new std::string(num);
 }

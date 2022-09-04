@@ -30,8 +30,6 @@ public:
 	BigInt operator+() const;  // unary +
 	BigInt operator-() const;  // unary -
 
-	
-
 	bool operator==(const BigInt&) const;
 	bool operator!=(const BigInt&) const;
 	bool operator<(const BigInt&) const;
