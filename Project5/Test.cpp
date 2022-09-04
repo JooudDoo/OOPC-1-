@@ -10,6 +10,11 @@ int main() {
 
 	value = value + value2;
 
+	value = -123;
+	value2 = 123;
+
+	value = value + value2;
+
 	value = 1;
 	value2 = 0;
 

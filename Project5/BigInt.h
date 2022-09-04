@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include<iostream>
 class BigInt {
 public:
 	BigInt();
@@ -42,7 +42,7 @@ public:
 	operator int() const;
 	operator std::string() const;
 
-	std::string get_value() const;
+	std::string data() const;
 	size_t size() const;  // size in bytes
 private:
 	void clear_value();
