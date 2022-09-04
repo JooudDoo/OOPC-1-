@@ -1,9 +1,11 @@
-#include "BigInt.h"
+﻿#include "BigInt.h"
 
 #define fromChar(a) (a-'0')
 #define toChar(a) (a+'0')
 
 constexpr const int BUFFER_STANDART_SIZE = 256;
+
+/*Ｃｏｎｓｔｒｕｃｔｏｒｓ*/
 
 BigInt::BigInt() {
 	BigInt::value = new std::string("0");
@@ -17,9 +19,10 @@ BigInt::BigInt(int num) {
 }
 
 BigInt::BigInt(std::string num) {
-	for (auto elem : num) {
-		if ((elem < '0' || elem > '9') && elem != '-') {
-			throw std::invalid_argument("NAN: " + elem);
+	for (std::string::iterator elem = num.begin(); elem != num.end(); elem++) {
+		if ((*elem < '0' || *elem > '9') &&
+			(*elem == '-' && elem != num.begin())) {
+			throw std::invalid_argument("NAN: " + *elem);
 		}
 	}
 	BigInt::value = new std::string(num);
@@ -29,9 +32,13 @@ BigInt::BigInt(const BigInt& num) {
 	BigInt::value = new std::string(num.data());
 }
 
+/*Ｄｅｃｏｎｓｔｒｕｃｔｏｒｓ*/
+
 BigInt::~BigInt() {
 	clear_value();
 }
+
+/*Ａｓｓｉｇｎｍｅｎｔ*/
 
 BigInt& BigInt::operator=(const BigInt& new_value) { //TODO: rework copy algorith
 	std::string str_buff(new_value.data());
@@ -40,7 +47,9 @@ BigInt& BigInt::operator=(const BigInt& new_value) { //TODO: rework copy algorit
 	return *this;
 }
 
-BigInt operator+(const BigInt& first, const BigInt& second) {
+/*Ｏｐｅｒａｔｉｏｎｓ*/
+
+BigInt operator+(const BigInt& first, const BigInt& second) { //TODO: IMPLIMENT NEGATIVE NUMBERS OPERATION
 	std::string fst_val;
 	std::string snd_val;
 
@@ -53,12 +62,12 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 		fst_val = second.data();
 	}
 
-	std::reverse(fst_val.begin(), fst_val.end()); //TODO: REMOVE RESERVE (TRY TO USE PURE DATA)
+	std::reverse(fst_val.begin(), fst_val.end()); //TODO: REMOVE REVERSE (TRY TO USE PURE DATA)
 	std::reverse(snd_val.begin(), snd_val.end());
 
 	std::string result(fst_val.length() + 1, 0);
 
-	for (size_t fst_i = 0, snd_i = 0; snd_i < result.length(); fst_i++, snd_i++) {
+	for (size_t fst_i = 0, snd_i = 0; fst_i < result.length(); fst_i++, snd_i++) {
 		if (snd_i < snd_val.length()) {
 			result[fst_i] += fromChar(snd_val[snd_i]);
 		}
@@ -73,7 +82,7 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 		result.pop_back();
 	}
 
-	for (int front_i = 0, back_i = result.length() - 1; front_i < result.length()/2 + result.length()%2; front_i++, back_i--) {
+	for (int front_i = 0, back_i = (int)result.length() - 1; front_i < result.length()/2 + result.length()%2; front_i++, back_i--) {
 		char cache = toChar(result[back_i]);
 		result[back_i] = toChar(result[front_i]);
 		result[front_i] = cache;
@@ -81,6 +90,27 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 
 	return BigInt(result);
 }
+
+/*Ｃｏｍｐａｒｉｓｏｎｓ*/
+
+bool BigInt::operator==(const BigInt& num) const{
+	return this->data() == num.data();
+};
+bool BigInt::operator!=(const BigInt& num) const{
+	return this->data() != num.data();
+};
+bool BigInt::operator<(const BigInt& num) const{
+	return this->data() < num.data();
+};
+bool BigInt::operator>(const BigInt& num) const{
+	return this->data() > num.data();
+};
+bool BigInt::operator<=(const BigInt& num) const{
+	return this->data() <= num.data();
+};
+bool BigInt::operator>=(const BigInt& num) const{
+	return this->data() >= num.data();
+};
 
 std::string BigInt::data() const {
 	if (value != NULL) {
@@ -91,8 +121,10 @@ std::string BigInt::data() const {
 	}
 }
 
+bool BigInt::is_neg() {
+	return (*this->data().begin() == '-');
+}
+
 void BigInt::clear_value() {
 	delete value;
 }
-
-

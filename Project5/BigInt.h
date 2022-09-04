@@ -44,9 +44,17 @@ public:
 	size_t size() const;  // size in bytes
 private:
 	void clear_value();
-	std::string reverse_value(std::string);
+	bool is_neg();
 	
 	std::string* value;
 };
 
 BigInt operator+(const BigInt&, const BigInt&);
+BigInt operator-(const BigInt&, const BigInt&);
+BigInt operator*(const BigInt&, const BigInt&);
+BigInt operator/(const BigInt&, const BigInt&);
+BigInt operator^(const BigInt&, const BigInt&);
+BigInt operator%(const BigInt&, const BigInt&);
+BigInt operator&(const BigInt&, const BigInt&);
+BigInt operator|(const BigInt&, const BigInt&);
+
