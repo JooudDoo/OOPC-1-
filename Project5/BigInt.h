@@ -13,8 +13,8 @@ public:
 
 	BigInt operator~() const; //??
 
-	BigInt& operator++();
-	const BigInt operator++(int) const;
+	BigInt& operator++(); //PreIncrement (Increase our value in memory, return x+1)
+	const BigInt operator++(int) const; //PostIncrement (Does not increase our value in memory, return x+1)
 	BigInt& operator--();
 	const BigInt operator--(int) const;
 
@@ -40,14 +40,17 @@ public:
 	operator int() const;
 	operator std::string() const;
 
+
 	std::string data() const;
 	size_t size() const;  // size in bytes
 private:
 	void clear_value();
-	bool is_neg();
+	bool is_neg() const;
 	
-	std::string* value;
+	std::string value;
 };
+
+BigInt abs(const BigInt&);
 
 BigInt operator+(const BigInt&, const BigInt&);
 BigInt operator-(const BigInt&, const BigInt&);
@@ -58,3 +61,4 @@ BigInt operator%(const BigInt&, const BigInt&);
 BigInt operator&(const BigInt&, const BigInt&);
 BigInt operator|(const BigInt&, const BigInt&);
 
+std::ostream& operator<<(std::ostream& o, const BigInt& i);
