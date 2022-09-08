@@ -24,30 +24,29 @@ bool test_two(string expr) {
 
 	bool is_correct = false;
 
+	BigInt my_ans(0);
+	long long correct_ans;
+
 	switch (oper)
 	{
-		int correct_ans;
-		int my_ans;
 	case('+'):
-		correct_ans = (int)*a + (int)*b;
+		correct_ans = (long long)*a + (long long)*b;
 		my_ans = *a + *b;
-		is_correct = correct_ans == my_ans;
-		cout << " = [" << my_ans << "] / {" << correct_ans << "} ";
-		cout << (is_correct ? "CORRECT" : "!!WRONG!!");
-		cout << endl;
 		break;
 	case('-'):
-		correct_ans = (int)*a - (int)*b;
+		correct_ans = (long long)*a - (long long)*b;
 		my_ans = *a - *b;
-		is_correct = correct_ans == my_ans;
-		cout << " = [" << my_ans << "] / {" << correct_ans << "} ";
-		cout << (is_correct ? "CORRECT" : "!!WRONG!!");
-		cout << endl;
 		break;
-	default:
-		cout << "INVALID OPERATION" << endl;
+	case('*'):
+		correct_ans = (long long)*a * (long long)*b;
+		my_ans = *a * *b;
 		break;
 	}
+
+	is_correct = (BigInt)correct_ans == my_ans;
+	cout << " = [" << my_ans << "] / {" << correct_ans << "} ";
+	cout << (is_correct ? "CORRECT" : "!!WRONG!!");
+	cout << endl;
 	delete a;
 	delete b;
 	return is_correct;
@@ -56,23 +55,25 @@ bool test_two(string expr) {
 
 int main() {
 
+ 
 	srand(time(NULL));
 
-	vector<char> oper_lst = {'+', '-'};
+	vector<char> oper_lst = {'+', '-', '*'};
 	vector<int>  sign_list = { 1, -1 };
 
 	bool is_correct = true;
 
 	size_t test_num = 0;
 
+#define RUN
 #ifdef RUN
 	do {
 		cout << "(" << test_num << ") ";
 
 		stringstream expr_s;
 
-		int fst_num = ((int)rand() + ((int)rand() << 10)) * (sign_list[rand() % 2]);
-		int snd_num = ((int)rand() + ((int)rand() << 10)) * (sign_list[rand() % 2]);
+		int fst_num = ((int)rand()  + ((int)rand() << 16)) * (sign_list[rand() % 2]);
+		int snd_num = ((int)rand()  + ((int)rand() << 16)) * (sign_list[rand() % 2]);
 
 		char oper = oper_lst[rand() % oper_lst.size()];
 

@@ -2,9 +2,14 @@
 
 #include<iostream>
 class BigInt {
+	friend BigInt operator+(const BigInt&, const BigInt&);
+	friend BigInt operator-(const BigInt&, const BigInt&);
+	friend BigInt operator*(const BigInt&, const BigInt&);
+
 public:
 	BigInt();
 	BigInt(int);
+	BigInt(long long);
 	BigInt(std::string); // бросать исключение std::invalid_argument при ошибке
 	BigInt(const BigInt&);
 	~BigInt();
@@ -44,6 +49,7 @@ public:
 	std::string data() const;
 	size_t size() const;  // size in bytes
 private:
+
 	void clear_value();
 	bool is_neg() const;
 	
