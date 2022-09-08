@@ -45,7 +45,6 @@ public:
 	operator int() const;
 	operator std::string() const;
 
-
 	std::string data() const;
 	size_t size() const;  // size in bytes
 private:

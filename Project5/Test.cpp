@@ -65,7 +65,7 @@ int main() {
 
 	size_t test_num = 0;
 
-#define RUN
+#define RUN1
 #ifdef RUN
 	do {
 		cout << "(" << test_num << ") ";

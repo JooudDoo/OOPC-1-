@@ -85,10 +85,8 @@ BigInt::operator std::string() const {
 
 /*Ａｓｓｉｇｎｍｅｎｔ*/
 
-BigInt& BigInt::operator=(const BigInt& new_value) { //TODO: rework copy algorith
-	std::string str_buff(new_value.data());
-	//this->clear_value();
-	this->value = std::string(str_buff);
+BigInt& BigInt::operator=(const BigInt& new_value) {
+	this->value = new_value.data();
 	return *this;
 }
 
@@ -246,15 +244,15 @@ BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
 	std::string fst_val;
 	std::string snd_val;
 
-	if (reduce.is_neg() && deduct.is_neg()) { //TODO: REWORK THIS IFs (substraction of two negatives [swap their positions like: -1 - -2 = 2 - 1])
+	if (reduce.is_neg() && deduct.is_neg()) { //(substraction of two negatives [swap their positions like: -1 - -2 = 2 - 1])
 		return -deduct - -reduce;
 	}
 
-	if (deduct.is_neg()) { //TODO: REWORK THIS IFs (addition of two possitives)
+	if (deduct.is_neg()) { //(addition of two possitives)
 		return reduce + -deduct;
 	}
 
-	if (reduce.is_neg()) { //TODO: REWORK THIS IFs (addition of two negative)
+	if (reduce.is_neg()) { //(addition of two negative)
 		return reduce + -deduct;
 	}
 
