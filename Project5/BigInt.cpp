@@ -1,7 +1,8 @@
 ﻿#include "BigInt.h"
+#include <sstream>
 
-#define fromChar(a) (a-'0')
-#define toChar(a) (a+'0')
+constexpr int fromChar(char a) { return a - '0'; }
+constexpr char toChar(int a) { return a + '0'; }
 
 constexpr const int BUFFER_STANDART_SIZE = 256;
 
@@ -12,16 +13,18 @@ BigInt::BigInt() {
 };
 
 BigInt::BigInt(int num) {
-	char* buff = new char[BUFFER_STANDART_SIZE];
-	snprintf(buff, BUFFER_STANDART_SIZE, "%d", num);
-	BigInt::value = std::string(buff);
-	delete[] buff;
+	std::stringstream num_s;
+	num_s << num;
+	BigInt::value = num_s.str();
 }
 
 BigInt::BigInt(std::string num) {
-	for (std::string::iterator elem = num.begin(); elem != num.end(); elem++) {
-		if ((*elem < '0' || *elem > '9') &&
-			(*elem == '-' && elem != num.begin())) {
+	std::string::iterator elem = num.begin();
+	if (*elem == '-' || *elem == '+') {
+		elem++;
+	}
+	for (elem; elem != num.end(); elem++) {
+		if ((*elem < '0' || *elem > '9')) {
 			throw std::invalid_argument("NAN: " + *elem);
 		}
 	}

@@ -65,7 +65,7 @@ int main() {
 
 	size_t test_num = 0;
 
-
+#ifdef RUN
 	do {
 		cout << "(" << test_num << ") ";
 
@@ -90,7 +90,7 @@ int main() {
 		test_num++;
 
 	} while (is_correct);
-
+#endif
 
 
 	return 0;
