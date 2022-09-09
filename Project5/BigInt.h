@@ -5,6 +5,7 @@ class BigInt {
 	friend BigInt operator+(const BigInt&, const BigInt&);
 	friend BigInt operator-(const BigInt&, const BigInt&);
 	friend BigInt operator*(const BigInt&, const BigInt&);
+	friend BigInt operator/(const BigInt&, const BigInt&);
 
 public:
 	BigInt();
@@ -50,6 +51,12 @@ public:
 private:
 
 	void clear_value();
+	//inserts string value into end of the num
+	void insert(const std::string&); //TODO : Make template for several types (?) [Unite this two functions in one]
+	void insert(const char&); //TODO : REWORK THIS OPERATIONS (REMOVE COPY/PASTE)
+	void insert(const int&);
+
+	bool is_zero() const;
 	bool is_neg() const;
 	
 	std::string value;

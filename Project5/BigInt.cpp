@@ -304,7 +304,7 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 		shift += 1;
 	}
 
-	std::string::iterator result_c = result.begin(); //TODO : MAKE UNITY REMOVE LEADING ZERO ALGO
+	std::string::iterator result_c = result.begin(); //TODO : MAKE UNITE REMOVE LEADING ZERO ALGO
 	while (result_c != result.end() && *result_c == '0') {
 		result_c++;
 	}
@@ -314,6 +314,68 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 		return -(BigInt)result;
 	}
 	return (BigInt)result;
+}
+
+BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
+	if (divider_raw.is_zero()) {
+		throw std::invalid_argument("division on zero");
+	}
+	if (abs(divisible_raw) < abs(divider_raw)) {
+		return (BigInt)0;
+	}
+	if (divisible_raw == divider_raw) {
+		return (BigInt)1;
+	}
+	if (divider_raw == (BigInt)1) {
+		return divisible_raw;
+	}
+
+	BigInt inter_divisible, inter_divider, result;
+
+	bool is_neg_res = false;
+
+	if (divisible_raw.is_neg() && divider_raw.is_neg()) {
+		is_neg_res = false;
+	}
+	else if (divisible_raw.is_neg() || divider_raw.is_neg()) {
+		is_neg_res = true;
+	}
+
+	BigInt divisible = abs(divisible_raw), divider = abs(divider_raw);
+
+	size_t divisible_c = 0;
+	bool one_loop_complete = false;
+	while (divisible_c < divisible.size()) {
+		inter_divider = divider;
+		for (divisible_c; divisible_c < divisible.size(); divisible_c++) {
+			inter_divisible.insert(divisible.data()[divisible_c]);
+			if (inter_divisible >= inter_divider) {
+				divisible_c++;
+				break;
+			}
+			if (one_loop_complete) {
+				result.insert('0');
+			}
+		}
+
+		if (inter_divider > inter_divisible) {
+			break;
+		}
+
+		int oper_cnt = 1;
+		while (inter_divisible >= inter_divider + divider) {
+			inter_divider += divider;
+			oper_cnt++;
+		}
+
+		one_loop_complete = true;
+		inter_divisible -= inter_divider;
+		result.insert(oper_cnt);
+	}
+
+	if (is_neg_res)
+		return -result;
+	return result;
 }
 
 /*Ｃｏｍｐａｒｉｓｏｎｓ*/
@@ -334,7 +396,7 @@ bool BigInt::operator<(const BigInt& num) const{ //TODO: REWORK COMPARSIONS
 			return true - is_neg_oper;
 		}
 		else {
-			return (this->data() < num.data()) - is_neg_oper;
+			return (abs(*this).data() < abs(num).data()) - is_neg_oper;
 		}
 	}
 	if (is_neg()) {
@@ -373,14 +435,44 @@ size_t BigInt::size() const {
 }
 
 std::ostream& operator<<(std::ostream& o, const BigInt& i) {
-	for (auto elem : i.data()) {
+	for (char elem : i.data()) {
 		o << elem;
 	}
 	return o;
 }
 
+void BigInt::insert(const std::string& val) {
+	if (this->is_zero())
+		value = val;
+	else
+		value += val;
+}
+
+void BigInt::insert(const char& val) {
+	if (this->is_zero())
+		value = val;
+	else
+		value += val;
+}
+
+void BigInt::insert(const int& val) {
+	std::stringstream o;
+	o << val;
+	if (this->is_zero())
+		value = o.str();
+	else
+		value += o.str();
+	
+}
+
+bool BigInt::is_zero() const {
+	if (value.length() == 1 && value[0] == '0')
+		return true;
+	return false;
+}
+
 bool BigInt::is_neg() const {
-	return (*this->data().begin() == '-');
+	return (*value.begin() == '-');
 }
 
 //void BigInt::clear_value() {
