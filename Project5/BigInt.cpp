@@ -4,7 +4,7 @@
 
 constexpr int fromChar(char a) { return a - '0'; }
 constexpr char toChar(int a) { return a + '0'; }
-constexpr const int BUFFER_STANDART_SIZE = 256;
+constexpr int BUFFER_STANDART_SIZE = 256;
 
 	/// <summary>
 	/// Adds two strings as numbers and returns result as string with number
@@ -93,21 +93,21 @@ BigInt& BigInt::operator=(const BigInt& new_value) {
 /*Ｏｐｅｒａｔｉｏｎｓ*/
 
 BigInt& BigInt::operator++() {
-	*this = *this + (BigInt)1;
+	*this = *this + BigInt{ 1 };
 	return *this;
 }
 
 const BigInt BigInt::operator++(int) const {
-	return (*this) + (BigInt)1;
+	return (*this) + BigInt{ 1 };
 }
 
 BigInt& BigInt::operator--() {
-	*this = *this - (BigInt)1;
+	*this = *this - BigInt{ 1 };
 	return *this;
 }
 
 const BigInt BigInt::operator--(int) const {
-	return (*this) - (BigInt)1;
+	return (*this) - BigInt{ 1 };
 }
 
 BigInt& BigInt::operator+=(const BigInt& num) {
@@ -125,6 +125,11 @@ BigInt& BigInt::operator*=(const BigInt& num) {
 	return *this;
 }
 
+BigInt& BigInt::operator/=(const BigInt& num) {
+	*this = *this / num;
+	return *this;
+}
+
 BigInt abs(const BigInt& num) {
 	if (num.data()[0] == '-') {
 		BigInt newNum = BigInt(num.data().erase(0,1));
@@ -138,9 +143,9 @@ BigInt BigInt::operator+() const {
 }
 
 BigInt BigInt::operator-() const {
-	if (*this < (BigInt)0)
+	if (this->is_neg())
 		return abs(*this);
-	return this->data().insert(0, (std::string)"-");
+	return this->data().insert(0, "-");
 }
 
 std::string add_two_nums(const std::string& fst_val, const std::string& snd_val, const bool is_neg = false) {
@@ -221,8 +226,6 @@ void to_char_reverse(std::string& num) {
 }
 
 BigInt operator+(const BigInt& first, const BigInt& second) {
-	std::string fst_val = first.data();
-	std::string snd_val = second.data();
 	bool is_neg_res = false;
 
 	if (first.is_neg() && second.is_neg()) {
@@ -235,9 +238,9 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 		return first - -second;
 	}
 
-	std::string result = add_two_nums(fst_val, snd_val, is_neg_res);
+	std::string result = add_two_nums(first.data(), second.data(), is_neg_res);
 
-	return BigInt(result);
+	return BigInt{ result };
 }
 
 BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
@@ -270,7 +273,7 @@ BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
 	
 	std::string result = sub_two_nums(fst_val, snd_val, is_neg_res);
 
-	return BigInt(result);
+	return BigInt{ result };
 }
 
 BigInt operator*(const BigInt& first, const BigInt& second) {
@@ -291,10 +294,12 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 	std::string result(max_lenght, '0');
 	size_t shift = 1;
 
-	for (std::string::reverse_iterator fst = fst_val.rbegin(); fst != fst_val.rend() && *fst != '-'; fst++) {
-		std::string temp(max_lenght, '0'); //TODO : OPTIMIZE MEMORY ON TEMP
+	using revS = std::reverse_iterator<std::string>;
+
+	for (revS fst = fst_val.rbegin(); fst != fst_val.rend() && *fst != '-'; fst++) {
+		std::string temp(max_lenght, '0');
 		size_t temp_c = max_lenght - shift;
-		for (std::string::reverse_iterator snd = snd_val.rbegin(); snd != snd_val.rend() && *snd != '-'; snd++) {
+		for (revS snd = snd_val.rbegin(); snd != snd_val.rend() && *snd != '-'; snd++) {
 			temp[temp_c] = fromChar(temp[temp_c]) + fromChar(*snd) * fromChar(*fst);
 			temp[temp_c - 1] = toChar(temp[temp_c] / 10);
 			temp[temp_c] = toChar(temp[temp_c] % 10);
@@ -311,9 +316,9 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 	result.erase(result.begin(), result_c);
 
 	if (is_neg_res) {
-		return -(BigInt)result;
+		return -BigInt{ result };
 	}
-	return (BigInt)result;
+	return BigInt{ result };
 }
 
 BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
@@ -321,13 +326,10 @@ BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
 		throw std::invalid_argument("division on zero");
 	}
 	if (abs(divisible_raw) < abs(divider_raw)) {
-		return (BigInt)0;
+		return BigInt{ 0 };
 	}
 	if (divisible_raw == divider_raw) {
-		return (BigInt)1;
-	}
-	if (divider_raw == (BigInt)1) {
-		return divisible_raw;
+		return BigInt{ 1 };
 	}
 
 	BigInt inter_divisible, inter_divider, result;
