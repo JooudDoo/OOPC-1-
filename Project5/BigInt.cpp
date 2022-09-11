@@ -157,6 +157,8 @@ BigInt BigInt::operator+() const {
 }
 
 BigInt BigInt::operator-() const {
+	if (this->is_zero())
+		return *this;
 	if (this->is_neg())
 		return abs(*this);
 	return this->data().insert(0, "-");
@@ -335,8 +337,15 @@ BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
 }
 
 BigInt operator*(const BigInt& first, const BigInt& second) {
-	std::string fst_val = first.data();
-	std::string snd_val = second.data();
+	std::string fst_val, snd_val;
+	if (first.data().length() > second.data().length()) {
+		fst_val = second.data();
+		snd_val = first.data();
+	}
+	else {
+		fst_val = first.data();
+		snd_val = second.data();
+	}
 
 	bool is_neg_res = false;
 
