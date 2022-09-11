@@ -98,7 +98,7 @@ int main() {
 
 	size_t test_num = 0;
 
-#ifdef TEST_RUN
+#ifdef CALCULATE
 	do {
 		runTIMED(
 			for (size_t block_num = 0; block_num <= CNT_OF_ONE_BLOCK_BENCHMARKING && is_correct; block_num++) {
@@ -125,7 +125,6 @@ int main() {
 
 	} while (is_correct);
 
-#ifdef CALCULATE
 
 	WORD total_time = 0;
 	for (auto i : timers) {
@@ -165,7 +164,6 @@ int main() {
 	cout << total_time << "ms total work time (" << CNT_OF_REPEATS_BENCHMARKING << " operations)" << endl;
 	cout << total_time / timers.size() << "ms (" << CNT_OF_ONE_BLOCK_BENCHMARKING << " operations)" << endl;
 	cout << total_time / timers.size() / CNT_OF_ONE_BLOCK_BENCHMARKING << "ms on 1 operations" << endl;
-#endif
 
 #endif
 
