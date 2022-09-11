@@ -20,6 +20,15 @@ std::string add_two_nums(const std::string&, const std::string&, const bool);
 /// <param name="snd_val"> - second num</param>
 /// <returns>sub of two nums</returns>
 std::string sub_two_nums(const std::string&, const std::string&, const bool);
+/// <summary>
+/// Divides two numbers and returns the result of division or the remainder of division depending on the Boolean flag
+/// </summary>
+/// <param name="Divisible"></param>
+/// <param name="Divider"></param>
+/// <param name="Remains">True - returns the remainder/False - returns the quotient</param>
+/// <param name="Is negative"> True - result will be negative</param>
+/// <returns>Quotient or remainder</returns>
+std::string div_two_nums(const BigInt&, const BigInt&, const bool, const bool);
 
 void to_char_reverse(std::string&);
 
@@ -130,10 +139,15 @@ BigInt& BigInt::operator/=(const BigInt& num) {
 	return *this;
 }
 
+BigInt& BigInt::operator%=(const BigInt & num){
+	*this = *this % num;
+	return *this;
+}
+
+
 BigInt abs(const BigInt& num) {
 	if (num.data()[0] == '-') {
-		BigInt newNum = BigInt(num.data().erase(0, 1));
-		return newNum;
+		return num.data().erase(0, 1);
 	}
 	return num;
 }
@@ -213,6 +227,50 @@ std::string sub_two_nums(const std::string& fst_val, const std::string& snd_val,
 	return result;
 }
 
+std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg_res = false, const bool is_mod = false) {
+	BigInt inter_divisible, inter_divider, result;
+
+	size_t divisible_c = 0;
+	bool one_loop_complete = false;
+	while (divisible_c < divisible.size()) {
+		inter_divider = divider;
+
+		for (divisible_c; divisible_c < divisible.size(); divisible_c++) {
+			inter_divisible.insert(divisible.data()[divisible_c]);
+			if (inter_divisible >= inter_divider) {
+				divisible_c++;
+				break;
+			}
+			if (one_loop_complete) {
+				result.insert('0');
+			}
+		}
+
+		if (inter_divider > inter_divisible) {
+			break;
+		}
+
+		int oper_cnt = 1;
+		while (inter_divisible >= inter_divider + divider) {
+			inter_divider += divider;
+			oper_cnt++;
+		}
+
+		one_loop_complete = true;
+		inter_divisible -= inter_divider;
+		result.insert(oper_cnt);
+	}
+
+	if (is_mod)
+		result = inter_divisible;
+
+	if (is_neg_res)
+		return -result;
+	return result;
+
+
+}
+
 void to_char_reverse(std::string& num) {
 
 	for (int front_i = 0, back_i = (int)num.length() - 1;
@@ -240,7 +298,7 @@ BigInt operator+(const BigInt& first, const BigInt& second) {
 
 	std::string result = add_two_nums(first.data(), second.data(), is_neg_res);
 
-	return BigInt{ result };
+	return result;
 }
 
 BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
@@ -273,7 +331,7 @@ BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
 
 	std::string result = sub_two_nums(fst_val, snd_val, is_neg_res);
 
-	return BigInt{ result };
+	return result;
 }
 
 BigInt operator*(const BigInt& first, const BigInt& second) {
@@ -318,7 +376,7 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 	if (is_neg_res) {
 		return -BigInt{ result };
 	}
-	return BigInt{ result };
+	return result;
 }
 
 BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
@@ -332,8 +390,6 @@ BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
 		return BigInt{ 1 };
 	}
 
-	BigInt inter_divisible, inter_divider, result;
-
 	bool is_neg_res = false;
 
 	if (divisible_raw.is_neg() && divider_raw.is_neg()) {
@@ -345,39 +401,23 @@ BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
 
 	BigInt divisible = abs(divisible_raw), divider = abs(divider_raw);
 
-	size_t divisible_c = 0;
-	bool one_loop_complete = false;
-	while (divisible_c < divisible.size()) {
-		inter_divider = divider;
-		for (divisible_c; divisible_c < divisible.size(); divisible_c++) {
-			inter_divisible.insert(divisible.data()[divisible_c]);
-			if (inter_divisible >= inter_divider) {
-				divisible_c++;
-				break;
-			}
-			if (one_loop_complete) {
-				result.insert('0');
-			}
-		}
+	return div_two_nums(divisible, divider, is_neg_res);
+}
 
-		if (inter_divider > inter_divisible) {
-			break;
-		}
-
-		int oper_cnt = 1;
-		while (inter_divisible >= inter_divider + divider) {
-			inter_divider += divider;
-			oper_cnt++;
-		}
-
-		one_loop_complete = true;
-		inter_divisible -= inter_divider;
-		result.insert(oper_cnt);
+BigInt operator%(const BigInt& divisible_raw, const BigInt& divider_raw) {
+	if (divider_raw.is_zero()) {
+		throw std::invalid_argument("division on zero");
 	}
 
-	if (is_neg_res)
-		return -result;
-	return result;
+	bool is_neg_res = false;
+	if (divisible_raw.is_neg()) {
+		is_neg_res = true;
+	}
+
+	BigInt divisible = abs(divisible_raw), divider = abs(divider_raw);
+
+	return div_two_nums(divisible, divider, is_neg_res, true);
+
 }
 
 /*Ｃｏｍｐａｒｉｓｏｎｓ*/
@@ -424,12 +464,7 @@ bool BigInt::operator>=(const BigInt& num) const {
 };
 
 std::string BigInt::data() const {
-	if (value.size() > 0) {
-		return (std::string(value));
-	}
-	else {
-		return "0";
-	}
+	return value;
 }
 
 size_t BigInt::size() const {

@@ -45,6 +45,11 @@ bool test_two(string expr) {
 	case('/'):
 		correct_ans = (long long)*a / (long long)*b;
 		my_ans = *a / *b;
+		break;
+	case('%'):
+		correct_ans = (long long)*a % (long long)*b;
+		my_ans = *a % *b;
+		break;
 	}
 
 	is_correct = (BigInt)correct_ans == my_ans;
@@ -59,10 +64,9 @@ bool test_two(string expr) {
 
 int main() {
  
-
 	srand(time(NULL));
 
-	vector<char> oper_lst = {'+', '-', '*', '/'};
+	vector<char> oper_lst = {'+', '-', '*', '/', '%'};
 	vector<int>  sign_list = { 1, -1 };
 
 	bool is_correct = true;
@@ -70,6 +74,7 @@ int main() {
 	size_t test_num = 0;
 
 #define CALCULATE
+#define RUN
 #ifdef CALCULATE
 	SYSTEMTIME st, old;
 	GetSystemTime(&st);
@@ -77,7 +82,6 @@ int main() {
 	vector<WORD> timers;
 #endif
 
-#define RUN
 #ifdef RUN
 	do {
 #ifdef CALCULATE
@@ -98,7 +102,7 @@ int main() {
 		int fst_num = ((int)rand()  + ((int)rand() << 16)) * (sign_list[rand() % 2]);
 		int snd_num = ((int)rand()  /*+ ((int)rand() << 16)*/) * (sign_list[rand() % 2]);
 
-		char oper = '/';
+		char oper = '%';
 		//char oper = oper_lst[rand() % oper_lst.size()];
 
 		expr_s << fst_num << ' ' << oper << ' ' << snd_num;
@@ -139,6 +143,11 @@ int main() {
 	//Division (pos/neg)
 	//48117ms total work time(10000 opers)
 	//4374ms on 1000 opers
+	//4ms on 1 oper
+
+	//Mod (pos/neg)
+	//48657ms total work time(10000 opers)
+	//4423ms on 1000 opers
 	//4ms on 1 oper
 
 	cout << total_time << "ms total work time (10000 opers)" << endl;

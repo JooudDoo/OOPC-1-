@@ -6,6 +6,9 @@ class BigInt {
 	friend BigInt operator-(const BigInt&, const BigInt&);
 	friend BigInt operator*(const BigInt&, const BigInt&);
 	friend BigInt operator/(const BigInt&, const BigInt&);
+	friend BigInt operator%(const BigInt&, const BigInt&);
+
+	friend std::string div_two_nums(const BigInt&, const BigInt&, const bool, const bool);
 
 public:
 	BigInt();
