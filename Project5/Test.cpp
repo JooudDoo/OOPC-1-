@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
-#include<Windows.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -12,7 +12,7 @@ constexpr int CNT_OF_REPEATS_BENCHMARKING = 50000;
 constexpr int CNT_OF_ONE_BLOCK_BENCHMARKING = 1000;
 
 //Available operations { '+', '-', '*', '/', '%' }
-constexpr char oper_lst[] = { '+', '-', '*', '/', '%' };
+constexpr char oper_lst[] = { '%' };
 //Available signs { 1, -1};
 constexpr int sign_list[] = {1, -1};
 
@@ -126,44 +126,44 @@ int main() {
 	} while (is_correct);
 
 
-	WORD total_time = 0;
+	long long total_time = 0;
 	for (auto i : timers) {
 		total_time += i;
 	}
 
 	//Mixed (pos/neg)
-	//24277ms total work time(50000 operations)
-	//485ms(1000 operations)
-	//0ms on 1 operations
+	//91094ms total work time(50000 cycles)
+	//1821ms(1000 cycles)
+	//1.82188ms on 1 cycle
 
 	//Add (only positive)
-	//35048ms total work time(50000 operations)
-	//700ms(1000 operations)
-	//0ms on 1 operations
+	//93394ms total work time(50000 cycles)
+	//1867ms(1000 cycles)
+	//1.86788ms on 1 cycle
 
 	//Sub (only positive)
-	//35200ms total work time(50000 operations)
-	//704ms(1000 operations)
-	//0ms on 1 operations
+	//93502ms total work time(50000 cycles)
+	//1870ms(1000 cycles)
+	//1.87004ms on 1 cycle
 
 	//Multiplication (pos/neg)
-	//61413ms total work time(50000 operations)
-	//1228ms(1000 operations)
-	//1ms on 1 operations
+	//117658ms total work time(50000 cycles)
+	//2353ms(1000 cycles)
+	//2.35316ms on 1 cycle
 
 	//Division (pos/neg)
-	//16941ms total work time(50000 operations)
-	//338ms(1000 operations)
-	//0ms on 1 operations
+	//75847ms total work time(50000 cycles)
+	//1516ms(1000 cycles)
+	//1.51694ms on 1 cycle
 
 	//Mod (pos/neg)
-	//11526ms total work time(50000 operations)
-	//230ms(1000 operations)
-	//0ms on 1 operations
+	//69660ms total work time(50000 cycles)
+	//1393ms(1000 cycles)
+	//1.3932ms on 1 cycle
 
-	cout << total_time << "ms total work time (" << CNT_OF_REPEATS_BENCHMARKING << " operations)" << endl;
-	cout << total_time / timers.size() << "ms (" << CNT_OF_ONE_BLOCK_BENCHMARKING << " operations)" << endl;
-	cout << total_time / timers.size() / CNT_OF_ONE_BLOCK_BENCHMARKING << "ms on 1 operations" << endl;
+	cout << total_time << "ms total work time (" << CNT_OF_REPEATS_BENCHMARKING << " cycles)" << endl;
+	cout << total_time / timers.size() << "ms (" << CNT_OF_ONE_BLOCK_BENCHMARKING << " cycles)" << endl;
+	cout << (double)total_time / timers.size() / CNT_OF_ONE_BLOCK_BENCHMARKING << "ms on 1 cycle" << endl;
 
 #endif
 
