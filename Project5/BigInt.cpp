@@ -6,19 +6,19 @@ constexpr int fromChar(char a) { return a - '0'; }
 constexpr char toChar(int a) { return a + '0'; }
 constexpr int BUFFER_STANDART_SIZE = 256;
 
-	/// <summary>
-	/// Adds two strings as numbers and returns result as string with number
-	/// </summary>
-	/// <param name="fst_val"> - first num</param>
-	/// <param name="snd_val"> - second num</param>
-	/// <returns>sum of two nums</returns>
+/// <summary>
+/// Adds two strings as numbers and returns result as string with number
+/// </summary>
+/// <param name="fst_val"> - first num</param>
+/// <param name="snd_val"> - second num</param>
+/// <returns>sum of two nums</returns>
 std::string add_two_nums(const std::string&, const std::string&, const bool);
-	/// <summary>
-	/// Subs two strings as numbers and returns result as string with number
-	/// </summary>
-	/// <param name="fst_val"> - first num</param>
-	/// <param name="snd_val"> - second num</param>
-	/// <returns>sub of two nums</returns>
+/// <summary>
+/// Subs two strings as numbers and returns result as string with number
+/// </summary>
+/// <param name="fst_val"> - first num</param>
+/// <param name="snd_val"> - second num</param>
+/// <returns>sub of two nums</returns>
 std::string sub_two_nums(const std::string&, const std::string&, const bool);
 
 void to_char_reverse(std::string&);
@@ -132,7 +132,7 @@ BigInt& BigInt::operator/=(const BigInt& num) {
 
 BigInt abs(const BigInt& num) {
 	if (num.data()[0] == '-') {
-		BigInt newNum = BigInt(num.data().erase(0,1));
+		BigInt newNum = BigInt(num.data().erase(0, 1));
 		return newNum;
 	}
 	return num;
@@ -151,9 +151,9 @@ BigInt BigInt::operator-() const {
 std::string add_two_nums(const std::string& fst_val, const std::string& snd_val, const bool is_neg = false) {
 	std::string result(std::max(fst_val.size(), snd_val.size()) + 1, 0);
 
-	for (int i = 0, fst_c = fst_val.size()-1, snd_c = snd_val.size()-1;
-			i < result.length();
-			i++, fst_c--, snd_c--) {
+	for (int i = 0, fst_c = fst_val.size() - 1, snd_c = snd_val.size() - 1;
+		i < result.length();
+		i++, fst_c--, snd_c--) {
 		if (snd_c >= 0 && snd_val[snd_c] != '-') {
 			result[i] += fromChar(snd_val[snd_c]);
 		}
@@ -182,8 +182,8 @@ std::string sub_two_nums(const std::string& fst_val, const std::string& snd_val,
 	std::string result(std::max(fst_val.size(), snd_val.size()) + 1, 0);
 
 	for (int i = 0, fst_c = fst_val.size() - 1, snd_c = snd_val.size() - 1;
-			i < result.length();
-			i++, fst_c--, snd_c--) {
+		i < result.length();
+		i++, fst_c--, snd_c--) {
 		if (fst_c >= 0 && fst_val[fst_c] != '-') {
 			result[i] += fromChar(fst_val[fst_c]);
 		}
@@ -263,14 +263,14 @@ BigInt operator-(const BigInt& reduce, const BigInt& deduct) {
 
 	if (reduce < deduct) {
 		is_neg_res = true;
-		fst_val = deduct.data(); 
+		fst_val = deduct.data();
 		snd_val = reduce.data();
 	}
 	else {
 		fst_val = reduce.data();
 		snd_val = deduct.data();
 	}
-	
+
 	std::string result = sub_two_nums(fst_val, snd_val, is_neg_res);
 
 	return BigInt{ result };
@@ -294,7 +294,7 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 	std::string result(max_lenght, '0');
 	size_t shift = 1;
 
-	using revS = std::reverse_iterator<std::string>;
+	using revS = std::string::reverse_iterator;
 
 	for (revS fst = fst_val.rbegin(); fst != fst_val.rend() && *fst != '-'; fst++) {
 		std::string temp(max_lenght, '0');
@@ -382,13 +382,13 @@ BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {
 
 /*Ｃｏｍｐａｒｉｓｏｎｓ*/
 
-bool BigInt::operator==(const BigInt& num) const{
+bool BigInt::operator==(const BigInt& num) const {
 	return this->data() == num.data();
 };
-bool BigInt::operator!=(const BigInt& num) const{
+bool BigInt::operator!=(const BigInt& num) const {
 	return this->data() != num.data();
 };
-bool BigInt::operator<(const BigInt& num) const{ //TODO: REWORK COMPARSIONS
+bool BigInt::operator<(const BigInt& num) const { //TODO: REWORK COMPARSIONS
 	if ((is_neg() && num.is_neg()) || (!is_neg() && !num.is_neg())) {
 		bool is_neg_oper = (is_neg() && num.is_neg());
 		if (this->value.length() > num.value.length()) {
@@ -406,18 +406,18 @@ bool BigInt::operator<(const BigInt& num) const{ //TODO: REWORK COMPARSIONS
 	}
 	return false;
 };
-bool BigInt::operator>(const BigInt& num) const{ //TODO: REWORK COMPARSIONS
+bool BigInt::operator>(const BigInt& num) const { //TODO: REWORK COMPARSIONS
 	if (*this < num || *this == num) {
 		return false;
 	}
 	return true;
 };
-bool BigInt::operator<=(const BigInt& num) const{
+bool BigInt::operator<=(const BigInt& num) const {
 	if (*this < num || *this == num)
 		return true;
 	return false;
 };
-bool BigInt::operator>=(const BigInt& num) const{
+bool BigInt::operator>=(const BigInt& num) const {
 	if (*this > num || *this == num)
 		return true;
 	return false;
@@ -464,7 +464,7 @@ void BigInt::insert(const int& val) {
 		value = o.str();
 	else
 		value += o.str();
-	
+
 }
 
 bool BigInt::is_zero() const {
