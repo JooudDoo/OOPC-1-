@@ -227,7 +227,7 @@ std::string sub_two_nums(const std::string& fst_val, const std::string& snd_val,
 	return result;
 }
 
-std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg_res = false, const bool is_mod = false) {
+std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg = false, const bool is_mod = false) {
 	BigInt inter_divisible, inter_divider, result;
 
 	size_t divisible_c = 0;
@@ -264,7 +264,7 @@ std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const b
 	if (is_mod)
 		result = inter_divisible;
 
-	if (is_neg_res)
+	if (is_neg)
 		return -result;
 	return result;
 
