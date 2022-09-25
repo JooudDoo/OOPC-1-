@@ -28,7 +28,7 @@ std::string sub_two_nums(const std::string&, const std::string&, const bool);
 /// <param name="Remains">True - returns the remainder/False - returns the quotient</param>
 /// <param name="Is negative"> True - result will be negative</param>
 /// <returns>Quotient or remainder</returns>
-std::string div_two_nums(const BigInt&, const BigInt&, const bool, const bool);
+BigInt div_two_nums(const BigInt&, const BigInt&, const bool, const bool, BigInt*);
 
 void to_char_reverse(std::string&);
 
@@ -75,11 +75,13 @@ BigInt::BigInt(const BigInt& num) {
 	BigInt::value = std::string(num.data());
 }
 
+BigInt::BigInt(const BigBin& num) {
+	
+}
+
 /*Ｄｅｃｏｎｓｔｒｕｃｔｏｒｓ*/
 
-BigInt::~BigInt() {
-	//clear_value();
-}
+BigInt::~BigInt() = default;
 
 /*Ｔｒａｎｓｆｏｒｍｓ*/
 
@@ -229,7 +231,7 @@ std::string sub_two_nums(const std::string& fst_val, const std::string& snd_val,
 	return result;
 }
 
-std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg = false, const bool is_mod = false) {
+BigInt div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg = false, const bool is_mod = false, BigInt* mod_sib = nullptr) {
 	BigInt inter_divisible, inter_divider, result;
 
 	size_t divisible_c = 0;
@@ -262,6 +264,9 @@ std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const b
 		inter_divisible -= inter_divider;
 		result.insert(oper_cnt);
 	}
+
+	if (mod_sib)
+		*mod_sib = inter_divisible;
 
 	if (is_mod)
 		result = inter_divisible;
@@ -386,6 +391,10 @@ BigInt operator*(const BigInt& first, const BigInt& second) {
 		return -BigInt{ result };
 	}
 	return result;
+}
+
+BigInt operator^(const BigInt&, const BigInt&) {
+
 }
 
 BigInt operator/(const BigInt& divisible_raw, const BigInt& divider_raw) {

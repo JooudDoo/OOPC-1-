@@ -7,8 +7,9 @@ class BigInt {
 	friend BigInt operator*(const BigInt&, const BigInt&);
 	friend BigInt operator/(const BigInt&, const BigInt&);
 	friend BigInt operator%(const BigInt&, const BigInt&);
+	friend BigInt operator^(const BigInt&, const BigInt&);
 
-	friend std::string div_two_nums(const BigInt&, const BigInt&, const bool, const bool);
+	friend BigInt div_two_nums(const BigInt&, const BigInt&, const bool, const bool, BigInt*);
 
 public:
 	BigInt();
@@ -16,6 +17,7 @@ public:
 	BigInt(long long);
 	BigInt(std::string); // бросать исключение std::invalid_argument при ошибке
 	BigInt(const BigInt&);
+	BigInt(const BigBin&);
 	~BigInt();
 
 	BigInt& operator=(const BigInt&);  //возможно присваивание самому себе!
@@ -62,6 +64,18 @@ private:
 	bool is_zero() const;
 	bool is_neg() const;
 	
+	std::string value;
+};
+
+class BigBin {
+
+public:
+	BigBin(BigInt&);
+	~BigBin() = default;
+
+private:
+	void insert(const BigInt&);
+
 	std::string value;
 };
 

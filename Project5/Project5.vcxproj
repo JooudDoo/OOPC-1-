@@ -128,9 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BigBin.h" />
     <ClInclude Include="BigInt.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BigBin.cpp" />
     <ClCompile Include="BigInt.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>
