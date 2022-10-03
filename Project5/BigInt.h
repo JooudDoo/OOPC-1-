@@ -1,17 +1,21 @@
 #pragma once
 
 #include<iostream>
+
+
 class BigInt {
 	friend BigInt operator+(const BigInt&, const BigInt&);
 	friend BigInt operator-(const BigInt&, const BigInt&);
 	friend BigInt operator*(const BigInt&, const BigInt&);
 	friend BigInt operator/(const BigInt&, const BigInt&);
 	friend BigInt operator%(const BigInt&, const BigInt&);
+	friend BigInt operator|(const BigInt&, const BigInt&);
+	friend BigInt operator&(const BigInt&, const BigInt&);
 	friend BigInt operator^(const BigInt&, const BigInt&);
 
 	friend BigInt div_two_nums(const BigInt&, const BigInt&, const bool, const bool, BigInt*);
-
 public:
+	class BigBin;
 	BigInt();
 	BigInt(int);
 	BigInt(long long);
@@ -19,6 +23,8 @@ public:
 	BigInt(const BigInt&);
 	BigInt(const BigBin&);
 	~BigInt();
+
+	BigBin binary();
 
 	BigInt& operator=(const BigInt&);  //возможно присваивание самому себе!
 
@@ -53,29 +59,37 @@ public:
 
 	std::string data() const;
 	size_t size() const;  // size in bytes
+
+	class BigBin {
+		friend BigInt::BigBin operator|(const BigInt::BigBin&, const BigInt::BigBin&);
+		friend BigInt::BigBin operator&(const BigInt::BigBin&, const BigInt::BigBin&);
+		friend BigInt::BigBin operator^(const BigInt::BigBin&, const BigInt::BigBin&);
+	public:
+		BigBin();
+		BigBin(const BigInt&);
+		~BigBin() = default;
+
+		bool is_neg() const;
+		std::string data() const;
+	private:
+		void insert(const BigInt&);
+		int len() const;
+		bool is_zero() const;
+
+		bool _is_neg;
+		std::string value;
+	};
+
 private:
 
-	void clear_value();
 	//inserts string value into end of the num
-	void insert(const std::string&); //TODO : Make template for several types (?) [Unite this two functions in one]
-	void insert(const char&); //TODO : REWORK THIS OPERATIONS (REMOVE COPY/PASTE)
+	void insert(const std::string&);
+	void insert(const char&);
 	void insert(const int&);
 
 	bool is_zero() const;
 	bool is_neg() const;
 	
-	std::string value;
-};
-
-class BigBin {
-
-public:
-	BigBin(BigInt&);
-	~BigBin() = default;
-
-private:
-	void insert(const BigInt&);
-
 	std::string value;
 };
 
@@ -89,5 +103,9 @@ BigInt operator^(const BigInt&, const BigInt&);
 BigInt operator%(const BigInt&, const BigInt&);
 BigInt operator&(const BigInt&, const BigInt&);
 BigInt operator|(const BigInt&, const BigInt&);
+
+BigInt::BigBin operator|(const BigInt::BigBin&, const BigInt::BigBin&);
+BigInt::BigBin operator&(const BigInt::BigBin&, const BigInt::BigBin&);
+BigInt::BigBin operator^(const BigInt::BigBin&, const BigInt::BigBin&);
 
 std::ostream& operator<<(std::ostream& o, const BigInt& i);
