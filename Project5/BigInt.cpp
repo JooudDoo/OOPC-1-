@@ -1,6 +1,7 @@
 ﻿#include "BigInt.h"
 #include <utility>
 #include <sstream>
+#include <algorithm>
 
 constexpr int fromChar(char a) { return a - '0'; }
 constexpr char toChar(int a) { return a + '0'; }
@@ -28,7 +29,7 @@ std::string sub_two_nums(const std::string&, const std::string&, const bool);
 /// <param name="Remains">True - returns the remainder/False - returns the quotient</param>
 /// <param name="Is negative"> True - result will be negative</param>
 /// <returns>Quotient or remainder</returns>
-std::string div_two_nums(const BigInt&, const BigInt&, const bool, const bool);
+BigInt div_two_nums(const BigInt&, const BigInt&, const bool, const bool, BigInt*);
 
 void to_char_reverse(std::string&);
 
@@ -75,11 +76,23 @@ BigInt::BigInt(const BigInt& num) {
 	BigInt::value = std::string(num.data());
 }
 
+BigInt::BigInt(const BigBin& num) {
+	BigInt dvoika = 1, res;
+	std::string nums = num.data();
+	std::reverse(nums.begin(), nums.end());
+	for (char dig : nums) {
+		res += BigInt{ fromChar(dig) } * dvoika;
+		dvoika *= 2;
+	}
+	if (num.is_neg()) {
+		res = -res;
+	}
+	this->value = res.data();
+}
+
 /*Ｄｅｃｏｎｓｔｒｕｃｔｏｒｓ*/
 
-BigInt::~BigInt() {
-	//clear_value();
-}
+BigInt::~BigInt() = default;
 
 /*Ｔｒａｎｓｆｏｒｍｓ*/
 
@@ -144,6 +157,20 @@ BigInt& BigInt::operator%=(const BigInt & num){
 	return *this;
 }
 
+BigInt& BigInt::operator&=(const BigInt& num) {
+	*this = *this & num;
+	return *this;
+}
+
+BigInt& BigInt::operator|=(const BigInt& num) {
+	*this = *this | num;
+	return *this;
+}
+
+BigInt& BigInt::operator^=(const BigInt& num) {
+	*this = *this ^ num;
+	return *this;
+}
 
 BigInt abs(const BigInt& num) {
 	if (num.data()[0] == '-') {
@@ -229,7 +256,7 @@ std::string sub_two_nums(const std::string& fst_val, const std::string& snd_val,
 	return result;
 }
 
-std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg = false, const bool is_mod = false) {
+BigInt div_two_nums(const BigInt& divisible, const BigInt& divider, const bool is_neg = false, const bool is_mod = false, BigInt* mod_sib = nullptr) {
 	BigInt inter_divisible, inter_divider, result;
 
 	size_t divisible_c = 0;
@@ -262,6 +289,9 @@ std::string div_two_nums(const BigInt& divisible, const BigInt& divider, const b
 		inter_divisible -= inter_divider;
 		result.insert(oper_cnt);
 	}
+
+	if (mod_sib)
+		*mod_sib = inter_divisible;
 
 	if (is_mod)
 		result = inter_divisible;
@@ -429,6 +459,18 @@ BigInt operator%(const BigInt& divisible_raw, const BigInt& divider_raw) {
 
 }
 
+BigInt operator|(const BigInt& first, const BigInt& second) {
+	return BigInt{ BigInt::BigBin{first} | BigInt::BigBin{second} };
+}
+
+BigInt operator&(const BigInt& first, const BigInt& second) {
+	return BigInt{ BigInt::BigBin{first} & BigInt::BigBin{second} };
+}
+
+BigInt operator^(const BigInt& first, const BigInt& second) {
+	return BigInt{ BigInt::BigBin{first} ^ BigInt::BigBin{second} };
+}
+
 /*Ｃｏｍｐａｒｉｓｏｎｓ*/
 
 bool BigInt::operator==(const BigInt& num) const {
@@ -481,9 +523,7 @@ size_t BigInt::size() const {
 }
 
 std::ostream& operator<<(std::ostream& o, const BigInt& i) {
-	for (char elem : i.data()) {
-		o << elem;
-	}
+	o << i.data();
 	return o;
 }
 
@@ -521,6 +561,95 @@ bool BigInt::is_neg() const {
 	return (*value.begin() == '-');
 }
 
-//void BigInt::clear_value() {
-//	delete value;
-//}
+/*ＢｉｇＢｉｎ*/
+
+BigInt::BigBin::BigBin() {
+	value = "0";
+	_is_neg = false;
+}
+
+BigInt::BigBin::BigBin(const BigInt& num) {
+	BigInt mod_res, dnum = abs(num);
+	_is_neg = num.is_neg();
+	while (dnum > BigInt{ 0 }) {
+		dnum = div_two_nums(dnum, 2, false, false, &mod_res);
+		this->insert(mod_res);
+	}
+	if (!dnum.is_zero())
+		this->insert(dnum);
+	std::reverse(value.begin(), value.end());
+}
+
+BigInt::BigBin BigInt::binary() {
+	return BigBin(*this);
+}
+
+std::string BigInt::BigBin::data() const {
+	return value;
+}
+
+void BigInt::BigBin::insert(const BigInt& val) {
+	value += val.data();
+}
+
+BigInt::BigBin operator|(const BigInt::BigBin& first, const BigInt::BigBin& second) {
+	BigInt::BigBin result;
+	result.value.resize(std::max(first.len(), second.len()), '0'); //Dangerous operation
+	for (int i = std::max(first.len(), second.len()), fst_c = first.len(), snd_c = second.len();
+			 i >= 0;
+			 i--, fst_c--, snd_c--) {
+		if (fst_c >= 0) {
+			result.value[i] = toChar(fromChar(result.value[i]) | fromChar(first.value[fst_c]));
+		}
+		if (snd_c >= 0) {
+			result.value[i] = toChar(fromChar(result.value[i]) | fromChar(second.value[snd_c]));
+		}
+	}
+	result._is_neg = first._is_neg || second._is_neg;
+	return result;
+}
+
+BigInt::BigBin operator&(const BigInt::BigBin& first, const BigInt::BigBin& second) {
+	BigInt::BigBin result;
+	result.value.resize(std::max(first.len(), second.len()), '0'); //Dangerous operation
+	for (int i = std::max(first.len(), second.len()), fst_c = first.len(), snd_c = second.len();
+		fst_c >= 0 && snd_c >= 0 && i >= 0;
+		i--, fst_c--, snd_c--) {
+		if (fst_c >= 0 && snd_c >= 0) {
+			result.value[i] = toChar(fromChar(second.value[snd_c]) & fromChar(first.value[fst_c]));
+		}
+	}
+	result._is_neg = first._is_neg && second._is_neg;
+	return result;
+}
+
+BigInt::BigBin operator^(const BigInt::BigBin& first, const BigInt::BigBin& second) {
+	BigInt::BigBin result;
+	result.value.resize(std::max(first.len(), second.len()), '0'); //Dangerous operation
+	for (int i = std::max(first.len(), second.len()), fst_c = first.len(), snd_c = second.len();
+		i >= 0;
+		i--, fst_c--, snd_c--) {
+		if (fst_c >= 0) {
+			result.value[i] = toChar(fromChar(result.value[i]) ^ fromChar(first.value[fst_c]));
+		}
+		if (snd_c >= 0) {
+			result.value[i] = toChar(fromChar(result.value[i]) ^ fromChar(second.value[snd_c]));
+		}
+	}
+	result._is_neg = first._is_neg ^ second._is_neg;
+	return result;
+}
+
+int BigInt::BigBin::len() const {
+	return this->value.length();
+}
+
+bool BigInt::BigBin::is_neg() const {
+	return _is_neg;
+}
+
+bool BigInt::BigBin::is_zero() const {
+	if (value.length() == 1 && value[0] == '0')
+		return true;
+	return false;
+}

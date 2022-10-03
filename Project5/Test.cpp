@@ -11,10 +11,10 @@ using namespace std;
 constexpr int CNT_OF_REPEATS_BENCHMARKING = 50000;
 constexpr int CNT_OF_ONE_BLOCK_BENCHMARKING = 1000;
 
-//Available operations { '+', '-', '*', '/', '%' }
-constexpr char oper_lst[] = { '%' };
+//Available operations { '+', '-', '*', '/', '%', '|', '&', '^' }
+constexpr char oper_lst[] = { '|', '&', '^' };
 //Available signs { 1, -1};
-constexpr int sign_list[] = {1, -1};
+constexpr int sign_list[] = {1};
 
 #define CALCULATE
 
@@ -34,7 +34,6 @@ vector<long long> timers;
 					timers.push_back(time_to_msec(T_end) - time_to_msec(T_st)); }
 
 #endif
-
 
 bool test_two(string expr) {
 	cout << "TESTING this: " << expr;
@@ -75,6 +74,18 @@ bool test_two(string expr) {
 		correct_ans = (long long)*a % (long long)*b;
 		my_ans = *a % *b;
 		break;
+	case('|'):
+		correct_ans = (long long)*a | (long long)*b;
+		my_ans = *a | *b;
+		break;
+	case('&'):
+		correct_ans = (long long)*a & (long long)*b;
+		my_ans = *a & *b;
+		break;
+	case('^'):
+		correct_ans = (long long)*a ^ (long long)*b;
+		my_ans = *a ^ *b;
+		break;
 	}
 
 	is_correct = (BigInt)correct_ans == my_ans;
@@ -88,6 +99,7 @@ bool test_two(string expr) {
 
 int main() {
 
+#ifdef CALCULATE
 	if (CNT_OF_ONE_BLOCK_BENCHMARKING > CNT_OF_REPEATS_BENCHMARKING) {
 		throw invalid_argument("WRONG ATRIBUTES");
 	}
@@ -97,8 +109,6 @@ int main() {
 	bool is_correct = true;
 
 	size_t test_num = 0;
-
-#ifdef CALCULATE
 	do {
 		runTIMED(
 			for (size_t block_num = 0; block_num <= CNT_OF_ONE_BLOCK_BENCHMARKING && is_correct; block_num++) {
@@ -166,7 +176,5 @@ int main() {
 	cout << (double)total_time / timers.size() / CNT_OF_ONE_BLOCK_BENCHMARKING << "ms on 1 cycle" << endl;
 
 #endif
-
-
 	return 0;
 }
