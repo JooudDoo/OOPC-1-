@@ -131,6 +131,7 @@
     <ClInclude Include="BigInt.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Alina.cpp" />
     <ClCompile Include="BigInt.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>

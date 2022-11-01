@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "BigInt.h"
 
+#include <math.h>
 #include <iostream>
 #include <vector>
 #include <sstream>
@@ -14,9 +15,12 @@ constexpr int CNT_OF_ONE_BLOCK_BENCHMARKING = 1000;
 
 //Available operations { '+', '-', '*', '/', '%', '|', '&', '^' }
 std::vector<char> oper_lst { '+', '-', '*', '/', '%', '|', '&', '^' };
+//std::vector<char> oper_lst { '+', '-', '*', '/', '%' };
 //Available signs { 1, -1};
 std::vector<int> sign_lst {1, -1};
-#define LONG_LONG_SUPPORT true
+#define LONG_LONG_SUPPORT
+
+//#define MOD_MODE_MATH
 
 #define CALCULATE
 #define DEBUG_LOG
@@ -29,9 +33,17 @@ bool exsistSign(int sign) {
 	return std::find(sign_lst.begin(), sign_lst.end(), sign) != sign_lst.end();
 }
 
+#ifdef MOD_MODE_MATH
+#define MODBIG(a,b) ((a%b+b)%b)
+#else
+#define MODBIG(a,b) (a%b)
+#endif
+
 #ifdef LONG_LONG_SUPPORT
+#define LLSUP true
 #define CHECKEXPR(a,b,c) test_twoL(a,b,c)
 #else
+#define LLSUP false
 #define CHECKEXPR(a,b,c) test_twoI(a,b,c)
 #endif
 #ifdef DEBUG_LOG
@@ -62,7 +74,7 @@ bool test_two(string);
 int main() {
 	bool haveBinary = false;
 
-	std::cout << "Using long long to check: " << (LONG_LONG_SUPPORT?"True":"False") << endl;
+	std::cout << "Using long long to check: " << (LLSUP?"True":"False") << endl;
 	std::cout << "Number of operation calls: " << CNT_OF_REPEATS_BENCHMARKING << endl;
 	std::cout << "Number of operation calls in block: " << CNT_OF_ONE_BLOCK_BENCHMARKING << endl;
 	std::cout << "Operations to be checked: ";
@@ -86,7 +98,7 @@ int main() {
 		throw invalid_argument("WRONG ATRIBUTES");
 	}
 
-	int numbers_types_count = 4 - (LONG_LONG_SUPPORT ? 0 : 3);
+	int numbers_types_count = 4 - (LLSUP ? 0 : 3);
 
 	srand(time(NULL));
 
@@ -128,7 +140,7 @@ int main() {
 				break;
 			}
 
-			if ((oper == '/') || (oper == '&')) {
+			if ((oper == '/') || (oper == '%')) {
 				sndNum += 1;
 			}
 			if (!(oper == '&' || oper == '|' || oper == '^')){
@@ -145,6 +157,15 @@ int main() {
 				std::cout << "\tAn error occurred in the test. Continue testing" << endl;
 			}
 			test_num++;
+			if (is_correct == false) {
+				std::cout << endl << "To continue write 1:";
+				std::string vvod;
+				std::cin >> vvod;
+				if (vvod == "1")
+					is_correct = true;
+				else
+					break;
+			}
 		};
 		_ftime(&T_end);
 		timers.push_back(time_to_msec(T_end) - time_to_msec(T_st));
@@ -238,7 +259,7 @@ bool test_twoL(BigInt& a, char& oper, BigInt& b) {
 		my_ans = a / b;
 		break;
 	case('%'):
-		correct_ans = (long long)a % (long long)b;
+		correct_ans = MODBIG((long long)a, (long long)b);
 		my_ans = a % b;
 		break;
 	case('|'):
@@ -288,7 +309,7 @@ bool test_twoI(BigInt& a, char& oper, BigInt& b) {
 		my_ans = a / b;
 		break;
 	case('%'):
-		correct_ans = (int)a % (int)b;
+		correct_ans = MODBIG((int)a, (int)b);
 		my_ans = a % b;
 		break;
 	case('|'):
